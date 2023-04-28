@@ -54,9 +54,11 @@ module.exports = class Page {
     }
 
     async takeScreenShotIfTestFailed(state) {
-        if(state.assertionCalls != state.numPassingAsserts) {
+        //if(state.assertionCalls != state.numPassingAsserts) {
             let imageFileName = state.currentTestName + ".jpg";
-
+            if(!fs.existsSync(SCREENSHOT_FOLDER)) {
+                fs.mkdirSync(SCREENSHOT_FOLDER);
+            }
             this.driver.takeScreenshot().then(
                 function(image) {
                     fs.writeFileSync(SCREENSHOT_FOLDER + imageFileName, image, 'base64');
@@ -66,7 +68,7 @@ module.exports = class Page {
             await addAttach({
                 attach: imagePath
             });
-        }    
+        //}    
     }
 
     async getPageSource() {
@@ -75,7 +77,9 @@ module.exports = class Page {
     }
 
     emptyScreenshotFolder() {
-        //TODO clean screenshots folder before all tests
+        if(fs.existsSync(SCREENSHOT_FOLDER)) {
+            fs.rmdirSync(SCREENSHOT_FOLDER, { recursive: true });
+        }
     }
 
 }
